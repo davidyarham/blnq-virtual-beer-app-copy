@@ -1,0 +1,434 @@
+:root {
+	color-scheme: dark;
+	--beer: #f5a623;
+	--beer-dark: #c8720a;
+	--foam: #fff8ee;
+	--glass-tint: rgba(180, 220, 255, 0.12);
+	--glass-border: rgba(200, 230, 255, 0.45);
+	--level: 100;
+	font-family: system-ui, sans-serif;
+}
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	min-height: 100vh;
+	background: radial-gradient(ellipse at 50% 0%, #1a2a10 0%, #0b1209 60%, #060a04 100%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.scene {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 32px;
+	user-select: none;
+}
+
+/* ── Tilt wrapper ── */
+.glass-tilt {
+	position: relative;
+	transform-origin: 50% 100%;
+	transition: transform 0.4s cubic-bezier(.4, 0, .2, 1);
+	display: flex;
+	justify-content: center;
+}
+
+.glass-tilt.drinking {
+	transform: rotate(-38deg) translateX(-18px);
+}
+
+/* ── Glass wrapper ── */
+.glass-wrapper {
+	position: relative;
+	width: 160px;
+	height: 280px;
+}
+
+/* ── Rim ── */
+.glass-wrapper::before {
+	content: '';
+	position: absolute;
+	top: -6px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 148px;
+	height: 12px;
+	background: linear-gradient(180deg, rgba(220, 240, 255, 0.55) 0%, rgba(180, 215, 255, 0.2) 100%);
+	border-radius: 6px 6px 0 0;
+	border: 2px solid var(--glass-border);
+	border-bottom: none;
+	z-index: 5;
+}
+
+/* ── Base ── */
+.glass-wrapper::after {
+	content: '';
+	position: absolute;
+	bottom: -10px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 170px;
+	height: 14px;
+	background: linear-gradient(180deg, rgba(180, 215, 255, 0.25) 0%, rgba(140, 190, 255, 0.1) 100%);
+	border-radius: 0 0 10px 10px;
+	border: 2px solid var(--glass-border);
+	border-top: none;
+	z-index: 5;
+}
+
+/* ── Liquid clip (trapezoid crop) ── */
+.liquid-clip {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+	overflow: hidden;
+}
+
+/* ── Liquid ── */
+.liquid {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: calc(var(--level) * 1%);
+	background: linear-gradient(180deg,
+			color-mix(in srgb, var(--beer) 80%, white) 0%,
+			var(--beer) 30%,
+			var(--beer-dark) 100%);
+	transition: height 0.6s cubic-bezier(.4, 0, .2, 1);
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	overflow: hidden;
+}
+
+/* wave surface */
+.liquid::after {
+	content: '';
+	position: absolute;
+	top: 28px;
+	left: -50%;
+	width: 200%;
+	height: 14px;
+	background: rgba(255, 255, 255, 0.12);
+	border-radius: 50%;
+	animation: wave 2.4s ease-in-out infinite;
+}
+
+@keyframes wave {
+
+	0%,
+	100% {
+		transform: translateX(0) scaleY(1);
+	}
+
+	50% {
+		transform: translateX(12%) scaleY(0.6);
+	}
+}
+
+/* ── Foam ── */
+.foam {
+	height: 28px;
+	min-height: 12px;
+	background: var(--foam);
+	border-radius: 50% 50% 0 0 / 70% 70% 0 0;
+	position: relative;
+	flex-shrink: 0;
+	box-shadow: 0 -6px 18px rgba(255, 255, 255, 0.35), inset 0 -4px 8px rgba(200, 170, 100, 0.2);
+	transition: height 0.6s cubic-bezier(.4, 0, .2, 1), opacity 0.4s;
+}
+
+/* big left blob */
+.foam::before {
+	content: '';
+	position: absolute;
+	background: var(--foam);
+	border-radius: 50%;
+	width: 52px;
+	height: 26px;
+	top: -13px;
+	left: 6px;
+	box-shadow: inset 0 -3px 6px rgba(200, 170, 80, 0.15);
+}
+
+/* right blobs row */
+.foam::after {
+	content: '';
+	position: absolute;
+	background:
+		radial-gradient(ellipse 18px 14px at 0% 50%, var(--foam) 90%, transparent 91%),
+		radial-gradient(ellipse 22px 16px at 50% 50%, var(--foam) 90%, transparent 91%),
+		radial-gradient(ellipse 16px 12px at 100% 50%, var(--foam) 90%, transparent 91%);
+	width: 60px;
+	height: 20px;
+	top: -10px;
+	right: 4px;
+	border-radius: 0;
+}
+
+/* ── Bubbles ── */
+.bubbles {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+}
+
+.bubble {
+	position: absolute;
+	bottom: 0;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.3);
+	animation: rise linear infinite;
+}
+
+@keyframes rise {
+	0% {
+		transform: translateY(0) scale(1);
+		opacity: 0.6;
+	}
+
+	80% {
+		opacity: 0.4;
+	}
+
+	100% {
+		transform: translateY(-300px) scale(0.5);
+		opacity: 0;
+	}
+}
+
+/* ── Glass shell ── */
+.glass-shell {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(160deg,
+			rgba(200, 230, 255, 0.13) 0%,
+			rgba(180, 220, 255, 0.06) 60%,
+			rgba(200, 230, 255, 0.1) 100%);
+	clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+	border: none;
+	pointer-events: none;
+}
+
+/* outer border */
+.glass-shell::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+	border: 3px solid var(--glass-border);
+}
+
+/* inner glow */
+.glass-shell::after {
+	content: '';
+	position: absolute;
+	inset: 5px;
+	clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.glass-shine {
+	position: absolute;
+	top: 5%;
+	left: 13%;
+	width: 10px;
+	height: 70%;
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.08) 70%, transparent 100%);
+	border-radius: 6px;
+	transform: skewX(-3deg);
+}
+
+.glass-shine--2 {
+	left: 22%;
+	width: 4px;
+	height: 45%;
+	opacity: 0.35;
+}
+
+/* ── Handle ── */
+/*
+  Glass right edge at 30% height  ≈ 160 × (90 + 10×0.30)% = 148.8px from left → 11.2px from right
+  Glass right edge at 58.6% height ≈ 160 × (90 + 10×0.586)% = 153.4px from left → 6.6px from right
+  We bridge that gap with the ::before connector.
+*/
+.handle {
+	position: absolute;
+	right: -34px;
+	top: 32%;
+	width: 32px;
+	height: 76px;
+	border: 3.5px solid var(--glass-border);
+	border-left: none;
+	border-radius: 0 22px 22px 0;
+	background: linear-gradient(90deg, rgba(180, 215, 255, 0.08) 0%, rgba(180, 215, 255, 0.18) 100%);
+	box-shadow: inset -2px 0 8px rgba(180, 215, 255, 0.1);
+}
+
+/* top connector tab – flush with slanted glass wall */
+.handle::before {
+	content: '';
+	position: absolute;
+	top: -3px;
+	left: -16px;
+	width: 16px;
+	height: 9px;
+	background: transparent;
+	border-top: 3.5px solid var(--glass-border);
+	border-right: none;
+	transform-origin: right top;
+	transform: skewX(-9deg);
+}
+
+/* bottom connector tab */
+.handle::after {
+	content: '';
+	position: absolute;
+	bottom: -3px;
+	left: -12px;
+	width: 12px;
+	height: 9px;
+	background: transparent;
+	border-bottom: 3.5px solid var(--glass-border);
+	border-right: none;
+	transform-origin: right bottom;
+	transform: skewX(9deg);
+}
+
+/* ── Pour stream ── */
+.pour-stream {
+	position: absolute;
+	top: 10px;
+	right: -60px;
+	width: 10px;
+	background: linear-gradient(180deg, var(--beer) 0%, var(--beer-dark) 100%);
+	border-radius: 4px;
+	height: 0;
+	opacity: 0;
+	transition: opacity 0.2s;
+	transform-origin: top center;
+}
+
+.pour-stream.active {
+	animation: pour-flow 0.15s steps(2) infinite;
+	opacity: 1;
+}
+
+@keyframes pour-flow {
+	0% {
+		transform: scaleX(1);
+	}
+
+	50% {
+		transform: scaleX(0.8);
+	}
+
+	100% {
+		transform: scaleX(1);
+	}
+}
+
+/* ── Controls ── */
+.controls {
+	display: flex;
+	gap: 16px;
+}
+
+.btn {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 14px 28px;
+	border: none;
+	border-radius: 50px;
+	font-size: 1rem;
+	font-weight: 700;
+	cursor: pointer;
+	letter-spacing: 0.04em;
+	transition: transform 0.12s, box-shadow 0.12s, opacity 0.2s;
+}
+
+.btn:active {
+	transform: scale(0.95);
+}
+
+.btn--drink {
+	background: linear-gradient(135deg, #f5a623, #c8720a);
+	color: #1a0800;
+	box-shadow: 0 4px 24px rgba(245, 166, 35, 0.4);
+}
+
+.btn--drink:hover {
+	box-shadow: 0 6px 32px rgba(245, 166, 35, 0.6);
+}
+
+.btn--drink:disabled {
+	opacity: 0.35;
+	cursor: not-allowed;
+	transform: none;
+}
+
+.btn--topup {
+	background: linear-gradient(135deg, #4caf50, #1b5e20);
+	color: #e8ffe8;
+	box-shadow: 0 4px 24px rgba(76, 175, 80, 0.3);
+}
+
+.btn--topup:hover {
+	box-shadow: 0 6px 32px rgba(76, 175, 80, 0.5);
+}
+
+/* ── Level bar ── */
+.level-bar {
+	width: 200px;
+	height: 10px;
+	background: rgba(255, 255, 255, 0.1);
+	border-radius: 99px;
+	overflow: hidden;
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.level-fill {
+	height: 100%;
+	width: 100%;
+	background: linear-gradient(90deg, var(--beer-dark), var(--beer));
+	border-radius: 99px;
+	transform-origin: left;
+	transition: transform 0.6s cubic-bezier(.4, 0, .2, 1);
+}
+
+.level-label {
+	position: absolute;
+	right: -46px;
+	font-size: 0.8rem;
+	font-weight: 700;
+	color: var(--beer);
+	min-width: 40px;
+}
+
+/* ── Empty msg ── */
+.empty-msg {
+	font-size: 1.3rem;
+	font-weight: 700;
+	color: rgba(255, 255, 255, 0.5);
+	opacity: 0;
+	transition: opacity 0.4s;
+	pointer-events: none;
+}
+
+.empty-msg.visible {
+	opacity: 1;
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Beer App (Copy)</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+<script>
+	document.addEventListener('DOMContentLoaded', () => lucide.createIcons())
+</script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="scene">
+	<div class="glass-tilt" id="glassTilt">
+		<div class="glass-wrapper" id="glassWrapper">
+			<div class="liquid-clip">
+				<div class="liquid" id="liquid">
+					<div class="foam" id="foam"></div>
+					<div class="bubbles" id="bubbles"></div>
+				</div>
+			</div>
+			<div class="glass-shell">
+				<div class="glass-shine"></div>
+				<div class="glass-shine glass-shine--2"></div>
+			</div>
+			<div class="handle"></div>
+		</div>
+		<div class="pour-stream" id="pourStream"></div>
+	</div>
+
+	<div class="controls">
+		<button class="btn btn--drink" id="drinkBtn">
+			<i data-lucide="beer"></i>
+			Drink
+		</button>
+		<button class="btn btn--topup" id="topupBtn">
+			<i data-lucide="refresh-cw"></i>
+			Top Up
+		</button>
+	</div>
+
+	<div class="level-bar">
+		<div class="level-fill" id="levelFill"></div>
+		<span class="level-label" id="levelLabel">100%</span>
+	</div>
+
+	<div class="empty-msg" id="emptyMsg">All gone! 😢</div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
